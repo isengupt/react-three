@@ -1,5 +1,5 @@
 import "./App.css";
-import Font from "./Font";
+import Scene from "./Scene";
 
 function App() {
   return (
@@ -25,7 +25,7 @@ function App() {
           </a>
         </div>
       </div>
-      <Font />
+      <Scene />
     </>
   );
 }

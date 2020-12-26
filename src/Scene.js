@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import {vertex} from './shaders/vertex'
+import {fragment} from './shaders/fragment'
 
 
-
-class Scene extends Component {
+class Font extends Component {
   constructor(props) {
     super(props);
 
@@ -24,9 +25,9 @@ class Scene extends Component {
     this.renderer.setSize(this.width, this.height);
     this.renderer.physicallyCorrectLights = true;
     this.renderer.outputEncoding = THREE.sRGBEncoding;
-    this.mouse = new THREE.Vector2();
-    this.target = new THREE.Vector3(0,0,0);
-    this.raycaster = new THREE.Raycaster();
+    
+    
+    
 
     this.container = document.getElementById("scene");
 
@@ -39,7 +40,7 @@ class Scene extends Component {
       1000
     );
 
-    this.camera.position.set(0, 0, 15);
+    this.camera.position.set(0, 0, 2);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
@@ -47,58 +48,11 @@ class Scene extends Component {
     this.setupResize();
     this.addObjects();
     this.animate();
-    this.lighting();
-    this.mouseEvents();
+   
     this.resize();
     
   }
 
-  mouseEvents() {
-    var that = this;
-
-    this.touchme = new THREE.Mesh(
-      new THREE.PlaneGeometry(40,40,20,20),
-      new THREE.MeshBasicMaterial({color: 0x000000, wireframe: true})
-    )
-
-    //this.scene.add(this.touchme)
-
-    
-    function onMouseMove( event ) {
-
-      // calculate mouse position in normalized device coordinates
-      // (-1 to +1) for both components
-    
-      that.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-      that.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-      that.raycaster.setFromCamera( that.mouse, that.camera );
-
-      // calculate objects intersecting the picking ray
-      const intersects = that.raycaster.intersectObjects( [that.touchme] );
-
-      that.target = intersects[0].point;
-    
-    }
-
-    this.container.addEventListener( 'mousemove', onMouseMove, false );
-    
-  }
-
-  lighting() {
-    var directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-
-    directionalLight.position.set(1, 1, 1);
-    this.scene.add(directionalLight);
-
-    var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-
-    directionalLight.position.set(-1, -1, -1);
-    this.scene.add(directionalLight);
-
-    var light = new THREE.AmbientLight(0x404040);
-    this.scene.add(light);
-  }
 
   addObjects() {
     let that = this;
@@ -119,19 +73,13 @@ class Scene extends Component {
       fragmentShader: fragment,
     });
 
-    this.ribbons = [];
-    for (let i = 0; i < 1; i++) {
-      let ribbon = new Ribbon(this.material);
-      this.scene.add(ribbon.mesh);
+   
 
-      this.ribbons.push(ribbon);
-    }
+    this.geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
 
-    //this.geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
+    this.plane = new THREE.Mesh(this.geometry, this.material);
 
-    //this.plane = new THREE.Mesh(this.geometry, this.material);
-
-    //this.scene.add(this.plane);
+    this.scene.add(this.plane);
   }
 
   setupResize = () => {
@@ -200,9 +148,7 @@ class Scene extends Component {
 
     this.renderScene();
 
-    this.ribbons.forEach((ribbon) => {
-      ribbon.update(this.time, this.target);
-    });
+   
   }
 
   renderScene() {
@@ -221,4 +167,4 @@ class Scene extends Component {
   }
 }
 
-export default Scene;
+export default Font;
